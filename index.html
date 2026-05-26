@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>불규칙 동사 100개 — 학습 도구</title>
+<style>
+  :root {
+    --bg: #f5f7fb;
+    --surface: #ffffff;
+    --surface-2: #f0f3f9;
+    --border: #e2e8f0;
+    --text: #1f2937;
+    --text-dim: #64748b;
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --primary-soft: #eef2ff;
+    --success: #16a34a;
+    --success-soft: #dcfce7;
+    --danger: #dc2626;
+    --danger-soft: #fee2e2;
+    --warn: #d97706;
+    --warn-soft: #fef3c7;
+    --shadow-sm: 0 1px 2px rgba(15,23,42,.06), 0 1px 1px rgba(15,23,42,.04);
+    --shadow-md: 0 6px 18px rgba(15,23,42,.08);
+    --radius: 14px;
+    --radius-sm: 10px;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-tap-highlight-color: transparent;
+  }
+  button { font-family: inherit; cursor: pointer; }
+
+  /* ====== APP SHELL ====== */
+  .app {
+    max-width: 880px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+  }
+  header.topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .topbar .title {
+    font-weight: 700;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .topbar .brand-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--primary);
+  }
+  .topbar .back {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-size: 14px;
+    padding: 6px 10px;
+    border-radius: 8px;
+  }
+  .topbar .back:hover { background: var(--surface-2); color: var(--text); }
+  .topbar .stats {
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  main {
+    flex: 1;
+    padding: 20px 16px 80px;
+  }
+
+  /* ====== HOME ====== */
+  .hero {
+    background: linear-gradient(135deg, #6366f1, #818cf8);
+    color: #fff;
+    padding: 22px 20px;
+    border-radius: var(--radius);
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-size: 20px;
+    margin: 0 0 6px;
+  }
+  .hero p {
+    margin: 0;
+    opacity: .9;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .hero .progress-row {
+    margin-top: 14px;
+    background: rgba(255,255,255,.18);
+    border-radius: 999px;
+    height: 10px;
+    overflow: hidden;
+  }
+  .hero .progress-bar {
+    height: 100%;
+    background: #fff;
+    width: 0%;
+    transition: width .4s ease;
+  }
+  .hero .progress-stats {
+    margin-top: 8px;
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    opacity: .92;
+  }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin: 18px 4px 10px;
+  }
+
+  .mode-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .mode-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: left;
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .12s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .mode-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .mode-card .icon {
+    font-size: 24px;
+  }
+  .mode-card .label {
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .mode-card .desc {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.45;
+  }
+  .mode-card.featured {
+    background: var(--primary-soft);
+    border-color: #c7d2fe;
+  }
+
+  .cat-list {
+    display: grid;
+    gap: 8px;
+  }
+  .cat-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: background .12s;
+  }
+  .cat-row:hover { background: var(--surface-2); }
+  .cat-row .left { display: flex; align-items: center; gap: 10px; }
+  .cat-row .badge {
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+  .cat-row .name { font-weight: 600; font-size: 14px; }
+  .cat-row .meta { font-size: 12px; color: var(--text-dim); }
+  .cat-row .chev { color: var(--text-dim); font-size: 18px; }
+
+  /* ====== CATEGORY BROWSE ====== */
+  .verb-grid {
+    display: grid;
+    gap: 8px;
+  }
+  .verb-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    align-items: center;
+  }
+  .verb-forms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    font-size: 14px;
+  }
+  .verb-forms .form {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+  }
+  .verb-forms .form .lbl { font-size: 10px; color: var(--text-dim); text-transform: uppercase; }
+  .verb-forms .form .val { font-weight: 600; }
+  .verb-row .meaning {
+    color: var(--text-dim);
+    font-size: 13px;
+    grid-column: 1 / -1;
+    margin-top: 2px;
+  }
+  .verb-row .tts-btn {
+    background: var(--surface-2);
+    border: none;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    font-size: 16px;
+    color: var(--primary);
+  }
+  .mastered-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--success);
+    display: inline-block;
+    margin-left: 6px;
+  }
+  .struggling-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--danger);
+    display: inline-block;
+    margin-left: 6px;
+  }
+
+  /* ====== FLASHCARD ====== */
+  .flashcard-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    padding: 8px 0;
+  }
+  .flashcard {
+    width: 100%;
+    max-width: 420px;
+    aspect-ratio: 3 / 4;
+    perspective: 1000px;
+    cursor: pointer;
+  }
+  .flashcard-inner {
+    position: relative;
+    width: 100%; height: 100%;
+    transform-style: preserve-3d;
+    transition: transform .55s;
+  }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+  }
+  .flashcard-face.back { transform: rotateY(180deg); background: var(--primary-soft); border-color: #c7d2fe; }
+  .flashcard-face .big {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .flashcard-face .meaning {
+    font-size: 16px;
+    color: var(--text-dim);
+  }
+  .flashcard-face .forms-table {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    width: 100%;
+    margin-top: 12px;
+  }
+  .flashcard-face .forms-table div {
+    background: rgba(255,255,255,.6);
+    padding: 8px 6px;
+    border-radius: 8px;
+  }
+  .flashcard-face .forms-table .lbl { font-size: 10px; color: var(--text-dim); text-transform: uppercase; }
+  .flashcard-face .forms-table .val { font-weight: 600; font-size: 14px; }
+  .flashcard-face .hint {
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .deck-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+    max-width: 420px;
+    justify-content: space-between;
+  }
+  .deck-controls .pos {
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .icon-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    font-size: 18px;
+    color: var(--text);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .icon-btn:hover { background: var(--surface-2); }
+  .icon-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+  .deck-rate {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    max-width: 420px;
+  }
+  .deck-rate button {
+    flex: 1;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 14px;
+    border: 1px solid;
+  }
+  .deck-rate .again {
+    background: var(--danger-soft);
+    border-color: #fecaca;
+    color: var(--danger);
+  }
+  .deck-rate .ok {
+    background: var(--warn-soft);
+    border-color: #fde68a;
+    color: var(--warn);
+  }
+  .deck-rate .good {
+    background: var(--success-soft);
+    border-color: #bbf7d0;
+    color: var(--success);
+  }
+
+  /* ====== MATCHING GAME ====== */
+  .match-board {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .match-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .match-col .col-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  .match-card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 10px;
+    text-align: center;
+    font-weight: 600;
+    transition: all .2s;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    line-height: 1.3;
+  }
+  .match-card .sub {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+  .match-card.selected {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+  }
+  .match-card.matched {
+    background: var(--success-soft);
+    border-color: var(--success);
+    color: var(--success);
+    pointer-events: none;
+    opacity: .55;
+  }
+  .match-card.wrong {
+    background: var(--danger-soft);
+    border-color: var(--danger);
+    animation: shake .3s;
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+
+  /* ====== TYPING / FILL ====== */
+  .quiz-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 18px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 14px;
+  }
+  .quiz-prompt {
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  .quiz-prompt .verb {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .quiz-prompt .meaning {
+    color: var(--text-dim);
+    font-size: 14px;
+  }
+  .quiz-prompt .ko {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .quiz-sentence {
+    background: var(--surface-2);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    margin-bottom: 14px;
+    font-size: 16px;
+    line-height: 1.5;
+    text-align: center;
+  }
+  .quiz-sentence .blank {
+    display: inline-block;
+    min-width: 90px;
+    border-bottom: 2px solid var(--primary);
+    padding: 0 6px;
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  .input-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .input-pair {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 10px;
+    align-items: center;
+  }
+  .input-pair .lbl { font-size: 13px; color: var(--text-dim); font-weight: 600; }
+  .input-pair input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    font-family: inherit;
+    background: var(--surface);
+  }
+  .input-pair input:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+  .input-pair input.correct {
+    background: var(--success-soft);
+    border-color: var(--success);
+  }
+  .input-pair input.wrong {
+    background: var(--danger-soft);
+    border-color: var(--danger);
+  }
+
+  .quiz-feedback {
+    margin-top: 14px;
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .quiz-feedback.correct {
+    background: var(--success-soft);
+    color: var(--success);
+  }
+  .quiz-feedback.wrong {
+    background: var(--danger-soft);
+    color: var(--danger);
+  }
+  .quiz-feedback .reveal {
+    margin-top: 6px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 14px 18px;
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-weight: 600;
+    width: 100%;
+  }
+  .btn-primary:hover { background: var(--primary-hover); }
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .btn-secondary:hover { background: var(--surface-2); }
+
+  .quiz-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+  .quiz-progress .bar {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .quiz-progress .bar > div {
+    height: 100%;
+    background: var(--primary);
+    transition: width .3s ease;
+  }
+
+  /* ====== STATS / DASHBOARD ====== */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .stat-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 10px;
+    text-align: center;
+  }
+  .stat-box .num {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .stat-box .lbl {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-dim);
+  }
+  .empty-state .ico { font-size: 40px; margin-bottom: 8px; }
+
+  /* ====== RESULTS SCREEN ====== */
+  .results-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 20px;
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 16px;
+  }
+  .results-card .big {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 8px 0;
+  }
+  .results-card .label {
+    color: var(--text-dim);
+    font-size: 14px;
+  }
+  .results-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  /* ====== CATEGORY PICKER (game start) ====== */
+  .start-screen {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 18px;
+    border: 1px solid var(--border);
+    margin-bottom: 14px;
+  }
+  .start-screen h3 {
+    margin: 0 0 10px;
+    font-size: 16px;
+  }
+  .start-screen p {
+    color: var(--text-dim);
+    font-size: 13px;
+    margin: 0 0 14px;
+    line-height: 1.5;
+  }
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chip {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .chip.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+
+  /* ====== UTILITIES ====== */
+  .hidden { display: none !important; }
+  .center { text-align: center; }
+  .mt-8 { margin-top: 8px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-16 { margin-top: 16px; }
+  .gap-8 { display: flex; gap: 8px; flex-wrap: wrap; }
+  .gap-10 { display: flex; gap: 10px; }
+
+  /* Small screens */
+  @media (max-width: 480px) {
+    .mode-grid { grid-template-columns: 1fr; }
+    .flashcard-face .big { font-size: 30px; }
+    .verb-forms { font-size: 13px; gap: 6px 10px; }
+  }
+
+  /* Confetti for results */
+  .confetti {
+    position: fixed;
+    top: -10px;
+    width: 10px;
+    height: 10px;
+    z-index: 100;
+    pointer-events: none;
+    animation: fall 2.5s linear forwards;
+  }
+  @keyframes fall {
+    to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <button class="back hidden" id="backBtn">← 뒤로</button>
+    <div class="title" id="screenTitle"><span class="brand-dot"></span><span>불규칙 동사 100</span></div>
+    <div class="stats" id="topStats">0/100</div>
+  </header>
+  <main id="main"></main>
+</div>
+
+<script>
+/* ============================================================
+   VERB DATA - 100개
+   ============================================================ */
+const VERBS = [
+  // ===== AAA (불변형) =====
+  { id:'cast', base:'cast', past:'cast', pp:'cast', ko:'던지다', cat:'AAA', ex:'He __ a stone into the lake.', tense:'past' },
+  { id:'cost', base:'cost', past:'cost', pp:'cost', ko:'비용이 들다', cat:'AAA', ex:'The book __ ten dollars last year.', tense:'past' },
+  { id:'cut', base:'cut', past:'cut', pp:'cut', ko:'베다/자르다', cat:'AAA', ex:'She __ her finger yesterday.', tense:'past' },
+  { id:'hit', base:'hit', past:'hit', pp:'hit', ko:'때리다/치다', cat:'AAA', ex:'The ball __ the window.', tense:'past' },
+  { id:'hurt', base:'hurt', past:'hurt', pp:'hurt', ko:'다치다', cat:'AAA', ex:'I have __ my knee.', tense:'pp' },
+  { id:'let', base:'let', past:'let', pp:'let', ko:'시키다/허락하다', cat:'AAA', ex:'Mom __ me go out yesterday.', tense:'past' },
+  { id:'put', base:'put', past:'put', pp:'put', ko:'두다/놓다', cat:'AAA', ex:'He has __ the keys on the table.', tense:'pp' },
+  { id:'read', base:'read', past:'read', pp:'read', ko:'읽다', cat:'AAA', ex:'She __ the book last night.', tense:'past', note:'철자는 같고 발음만 변함 [리:드]→[레드]' },
+  { id:'set', base:'set', past:'set', pp:'set', ko:'놓아두다/차리다', cat:'AAA', ex:'He __ the table for dinner.', tense:'past' },
+  { id:'shut', base:'shut', past:'shut', pp:'shut', ko:'닫다', cat:'AAA', ex:'She has __ the door.', tense:'pp' },
+
+  // ===== ABB (과거=과거분사) =====
+  { id:'bind', base:'bind', past:'bound', pp:'bound', ko:'묶다', cat:'ABB', ex:'She __ the books with a rope.', tense:'past' },
+  { id:'bring', base:'bring', past:'brought', pp:'brought', ko:'가져오다', cat:'ABB', ex:'He __ his lunch yesterday.', tense:'past' },
+  { id:'build', base:'build', past:'built', pp:'built', ko:'짓다/건설하다', cat:'ABB', ex:'They have __ a new house.', tense:'pp' },
+  { id:'buy', base:'buy', past:'bought', pp:'bought', ko:'사다', cat:'ABB', ex:'I __ a new phone last week.', tense:'past' },
+  { id:'catch', base:'catch', past:'caught', pp:'caught', ko:'잡다', cat:'ABB', ex:'He __ a big fish yesterday.', tense:'past' },
+  { id:'dig', base:'dig', past:'dug', pp:'dug', ko:'(땅을) 파다', cat:'ABB', ex:'The dog __ a hole in the garden.', tense:'past' },
+  { id:'feel', base:'feel', past:'felt', pp:'felt', ko:'느끼다', cat:'ABB', ex:'I __ tired this morning.', tense:'past' },
+  { id:'fight', base:'fight', past:'fought', pp:'fought', ko:'싸우다', cat:'ABB', ex:'They __ for freedom long ago.', tense:'past' },
+  { id:'find', base:'find', past:'found', pp:'found', ko:'발견하다', cat:'ABB', ex:'She has __ her keys.', tense:'pp' },
+  { id:'hang', base:'hang', past:'hung', pp:'hung', ko:'매달다/걸다', cat:'ABB', ex:'He __ his coat on the hook.', tense:'past', note:'사형의 의미일 때는 hanged-hanged' },
+  { id:'have', base:'have/has', past:'had', pp:'had', ko:'가지다', cat:'ABB', ex:'She has __ many friends.', tense:'pp' },
+  { id:'hear', base:'hear', past:'heard', pp:'heard', ko:'듣다', cat:'ABB', ex:'I __ a strange noise last night.', tense:'past' },
+  { id:'hold', base:'hold', past:'held', pp:'held', ko:'붙잡다', cat:'ABB', ex:'She __ the baby gently.', tense:'past' },
+  { id:'keep', base:'keep', past:'kept', pp:'kept', ko:'지키다/간직하다', cat:'ABB', ex:'He has __ the secret.', tense:'pp' },
+  { id:'lay', base:'lay', past:'laid', pp:'laid', ko:'(알 등을) 놓다', cat:'ABB', ex:'The hen __ an egg this morning.', tense:'past', note:'lie(눕다)와 혼동 주의: lie-lay-lain' },
+  { id:'lead', base:'lead', past:'led', pp:'led', ko:'이끌다/지도하다', cat:'ABB', ex:'He __ the team to victory.', tense:'past' },
+  { id:'leave', base:'leave', past:'left', pp:'left', ko:'떠나다/남겨두다', cat:'ABB', ex:'She __ the office at 6 p.m.', tense:'past' },
+  { id:'lend', base:'lend', past:'lent', pp:'lent', ko:'빌려주다', cat:'ABB', ex:'He __ me his book yesterday.', tense:'past' },
+  { id:'lose', base:'lose', past:'lost', pp:'lost', ko:'(경기에) 지다/잃다', cat:'ABB', ex:'I have __ my wallet.', tense:'pp' },
+  { id:'make', base:'make', past:'made', pp:'made', ko:'만들다', cat:'ABB', ex:'She __ a cake last night.', tense:'past' },
+  { id:'mean', base:'mean', past:'meant', pp:'meant', ko:'~을 의미하다', cat:'ABB', ex:'I didn\'t know what he __.', tense:'past' },
+  { id:'meet', base:'meet', past:'met', pp:'met', ko:'만나다', cat:'ABB', ex:'We __ at the park yesterday.', tense:'past' },
+  { id:'pay', base:'pay', past:'paid', pp:'paid', ko:'(돈을) 지불하다', cat:'ABB', ex:'He __ the bill last night.', tense:'past' },
+  { id:'say', base:'say', past:'said', pp:'said', ko:'말하다', cat:'ABB', ex:'She __ goodbye and left.', tense:'past' },
+  { id:'seek', base:'seek', past:'sought', pp:'sought', ko:'찾다/추구하다', cat:'ABB', ex:'They __ help from the police.', tense:'past' },
+  { id:'sell', base:'sell', past:'sold', pp:'sold', ko:'팔다', cat:'ABB', ex:'He has __ his old car.', tense:'pp' },
+  { id:'send', base:'send', past:'sent', pp:'sent', ko:'보내다', cat:'ABB', ex:'I __ him a letter last week.', tense:'past' },
+  { id:'shine', base:'shine', past:'shone', pp:'shone', ko:'빛나다', cat:'ABB', ex:'The sun __ brightly yesterday.', tense:'past' },
+  { id:'shoot', base:'shoot', past:'shot', pp:'shot', ko:'쏘다', cat:'ABB', ex:'The hunter __ a deer.', tense:'past' },
+  { id:'sit', base:'sit', past:'sat', pp:'sat', ko:'앉다', cat:'ABB', ex:'She __ next to me at lunch.', tense:'past' },
+  { id:'sleep', base:'sleep', past:'slept', pp:'slept', ko:'잠자다', cat:'ABB', ex:'I __ for nine hours last night.', tense:'past' },
+  { id:'smell', base:'smell', past:'smelt', pp:'smelt', ko:'냄새가 나다', cat:'ABB', ex:'The flowers __ wonderful.', tense:'past' },
+  { id:'spend', base:'spend', past:'spent', pp:'spent', ko:'(돈/시간) 소비하다', cat:'ABB', ex:'He __ a lot of money on books.', tense:'past' },
+  { id:'stand', base:'stand', past:'stood', pp:'stood', ko:'일어서다', cat:'ABB', ex:'She __ by the window.', tense:'past' },
+  { id:'strike', base:'strike', past:'struck', pp:'struck', ko:'치다', cat:'ABB', ex:'Lightning __ the tree.', tense:'past' },
+  { id:'teach', base:'teach', past:'taught', pp:'taught', ko:'가르치다', cat:'ABB', ex:'My mother __ me English.', tense:'past' },
+  { id:'tell', base:'tell', past:'told', pp:'told', ko:'말하다', cat:'ABB', ex:'He __ me an interesting story.', tense:'past' },
+  { id:'think', base:'think', past:'thought', pp:'thought', ko:'생각하다', cat:'ABB', ex:'I __ about the problem all night.', tense:'past' },
+  { id:'understand', base:'understand', past:'understood', pp:'understood', ko:'이해하다', cat:'ABB', ex:'I have __ everything you said.', tense:'pp' },
+  { id:'win', base:'win', past:'won', pp:'won', ko:'이기다', cat:'ABB', ex:'Our team __ the game.', tense:'past' },
+
+  // ===== ABA (현재 = 과거분사) =====
+  { id:'become', base:'become', past:'became', pp:'become', ko:'~되다', cat:'ABA', ex:'She has __ a doctor.', tense:'pp' },
+  { id:'come', base:'come', past:'came', pp:'come', ko:'오다', cat:'ABA', ex:'He __ home late last night.', tense:'past' },
+  { id:'run', base:'run', past:'ran', pp:'run', ko:'달리다', cat:'ABA', ex:'She __ five kilometers yesterday.', tense:'past' },
+
+  // ===== ABC (모두 다름) =====
+  { id:'arise', base:'arise', past:'arose', pp:'arisen', ko:'일어나다/발생하다', cat:'ABC', ex:'A new problem has __.', tense:'pp' },
+  { id:'be_is', base:'am/is', past:'was', pp:'been', ko:'~이다/되다/있다', cat:'ABC', ex:'He __ at home yesterday.', tense:'past' },
+  { id:'be_are', base:'are', past:'were', pp:'been', ko:'~이다/되다/있다', cat:'ABC', ex:'They __ very happy then.', tense:'past' },
+  { id:'bear', base:'bear', past:'bore', pp:'born', ko:'(아이를) 낳다/참다', cat:'ABC', ex:'She was __ in Seoul.', tense:'pp' },
+  { id:'begin', base:'begin', past:'began', pp:'begun', ko:'시작하다', cat:'ABC', ex:'The class __ at 9 a.m.', tense:'past' },
+  { id:'bite', base:'bite', past:'bit', pp:'bitten', ko:'물다', cat:'ABC', ex:'A dog has __ him.', tense:'pp' },
+  { id:'blow', base:'blow', past:'blew', pp:'blown', ko:'불다', cat:'ABC', ex:'The wind __ hard yesterday.', tense:'past' },
+  { id:'break', base:'break', past:'broke', pp:'broken', ko:'부수다/깨뜨리다', cat:'ABC', ex:'He has __ his arm.', tense:'pp' },
+  { id:'choose', base:'choose', past:'chose', pp:'chosen', ko:'선택하다', cat:'ABC', ex:'She __ the red dress.', tense:'past' },
+  { id:'do', base:'do/does', past:'did', pp:'done', ko:'~을 하다', cat:'ABC', ex:'He has __ his homework.', tense:'pp' },
+  { id:'draw', base:'draw', past:'drew', pp:'drawn', ko:'끌다/그리다', cat:'ABC', ex:'She __ a picture of her dog.', tense:'past' },
+  { id:'drink', base:'drink', past:'drank', pp:'drunk', ko:'마시다', cat:'ABC', ex:'He has __ too much coffee.', tense:'pp' },
+  { id:'drive', base:'drive', past:'drove', pp:'driven', ko:'운전하다', cat:'ABC', ex:'She has __ for ten years.', tense:'pp' },
+  { id:'eat', base:'eat', past:'ate', pp:'eaten', ko:'먹다', cat:'ABC', ex:'I __ pizza for lunch.', tense:'past' },
+  { id:'fall', base:'fall', past:'fell', pp:'fallen', ko:'떨어지다', cat:'ABC', ex:'The leaves have __ from the tree.', tense:'pp' },
+  { id:'fly', base:'fly', past:'flew', pp:'flown', ko:'날다', cat:'ABC', ex:'The bird __ away.', tense:'past' },
+  { id:'forget', base:'forget', past:'forgot', pp:'forgotten', ko:'잊어버리다', cat:'ABC', ex:'I have __ his name.', tense:'pp' },
+  { id:'forgive', base:'forgive', past:'forgave', pp:'forgiven', ko:'용서하다', cat:'ABC', ex:'She has __ him.', tense:'pp' },
+  { id:'freeze', base:'freeze', past:'froze', pp:'frozen', ko:'얼다', cat:'ABC', ex:'The lake __ last winter.', tense:'past' },
+  { id:'get', base:'get', past:'got', pp:'gotten', ko:'얻다/사다', cat:'ABC', ex:'He has __ a new bike.', tense:'pp', note:'미국식 gotten / 영국식 got' },
+  { id:'give', base:'give', past:'gave', pp:'given', ko:'주다', cat:'ABC', ex:'She has __ me a gift.', tense:'pp' },
+  { id:'go', base:'go', past:'went', pp:'gone', ko:'가다', cat:'ABC', ex:'He has __ to school.', tense:'pp' },
+  { id:'grow', base:'grow', past:'grew', pp:'grown', ko:'자라다', cat:'ABC', ex:'The tree has __ tall.', tense:'pp' },
+  { id:'hide', base:'hide', past:'hid', pp:'hidden', ko:'숨다/숨기다', cat:'ABC', ex:'She has __ the gift.', tense:'pp' },
+  { id:'know', base:'know', past:'knew', pp:'known', ko:'알다', cat:'ABC', ex:'I have __ him for years.', tense:'pp' },
+  { id:'lie', base:'lie', past:'lay', pp:'lain', ko:'눕다', cat:'ABC', ex:'He __ on the bed.', tense:'past', note:'lay(놓다)와 혼동 주의: lay-laid-laid' },
+  { id:'mistake', base:'mistake', past:'mistook', pp:'mistaken', ko:'실수하다/혼동하다', cat:'ABC', ex:'I __ him for his brother.', tense:'past' },
+  { id:'ride', base:'ride', past:'rode', pp:'ridden', ko:'(말, 자전거 등을) 타다', cat:'ABC', ex:'She has __ a horse before.', tense:'pp' },
+  { id:'ring', base:'ring', past:'rang', pp:'rung', ko:'(벨이) 울리다', cat:'ABC', ex:'The bell __ at noon.', tense:'past' },
+  { id:'rise', base:'rise', past:'rose', pp:'risen', ko:'오르다', cat:'ABC', ex:'The sun has __.', tense:'pp' },
+  { id:'see', base:'see', past:'saw', pp:'seen', ko:'보다', cat:'ABC', ex:'I __ a movie last weekend.', tense:'past' },
+  { id:'shake', base:'shake', past:'shook', pp:'shaken', ko:'흔들다', cat:'ABC', ex:'He __ my hand firmly.', tense:'past' },
+  { id:'show', base:'show', past:'showed', pp:'shown', ko:'보여주다', cat:'ABC', ex:'She has __ me her photos.', tense:'pp' },
+  { id:'sing', base:'sing', past:'sang', pp:'sung', ko:'노래하다', cat:'ABC', ex:'They __ at the concert.', tense:'past' },
+  { id:'sink', base:'sink', past:'sank', pp:'sunk', ko:'가라앉다/침몰하다', cat:'ABC', ex:'The ship __ in the storm.', tense:'past' },
+  { id:'speak', base:'speak', past:'spoke', pp:'spoken', ko:'말하다', cat:'ABC', ex:'She has __ to the manager.', tense:'pp' },
+  { id:'steal', base:'steal', past:'stole', pp:'stolen', ko:'훔치다', cat:'ABC', ex:'Someone has __ my bag.', tense:'pp' },
+  { id:'swim', base:'swim', past:'swam', pp:'swum', ko:'헤엄치다', cat:'ABC', ex:'He __ across the river.', tense:'past' },
+  { id:'take', base:'take', past:'took', pp:'taken', ko:'가지다/잡다', cat:'ABC', ex:'She has __ the medicine.', tense:'pp' },
+  { id:'tear', base:'tear', past:'tore', pp:'torn', ko:'찢다', cat:'ABC', ex:'He has __ the paper.', tense:'pp' },
+  { id:'throw', base:'throw', past:'threw', pp:'thrown', ko:'던지다', cat:'ABC', ex:'She __ the ball to him.', tense:'past' },
+  { id:'wear', base:'wear', past:'wore', pp:'worn', ko:'입다', cat:'ABC', ex:'She has __ that dress before.', tense:'pp' },
+  { id:'write', base:'write', past:'wrote', pp:'written', ko:'쓰다', cat:'ABC', ex:'He has __ a letter.', tense:'pp' },
+
+  // ===== 조동사 =====
+  { id:'can', base:'can', past:'could', pp:'-', ko:'~할 수 있다', cat:'MODAL', ex:'When I was young, I __ run fast.', tense:'past' },
+  { id:'may', base:'may', past:'might', pp:'-', ko:'~해도 좋다/일지도 모른다', cat:'MODAL', ex:'He said it __ rain today.', tense:'past' },
+  { id:'shall', base:'shall', past:'should', pp:'-', ko:'~일 것이다/~해야 한다', cat:'MODAL', ex:'You __ study harder.', tense:'past' },
+  { id:'will', base:'will', past:'would', pp:'-', ko:'~일 것이다', cat:'MODAL', ex:'He said he __ come.', tense:'past' }
+];
+
+const CATEGORIES = {
+  AAA: { name: '불변형 (A-A-A)', desc: '세 형태가 모두 같아 가장 쉬워요', emoji: '🟢' },
+  ABB: { name: '동일형 (A-B-B)', desc: '과거형과 과거분사가 같아요', emoji: '🟡' },
+  ABA: { name: '현재=과거분사 (A-B-A)', desc: '원형과 과거분사가 같아요', emoji: '🟠' },
+  ABC: { name: '완전 변화형 (A-B-C)', desc: '세 형태가 모두 달라요. 가장 많음', emoji: '🔴' },
+  MODAL: { name: '조동사', desc: 'can, may, will, shall', emoji: '⚡' }
+};
+
+/* ============================================================
+   STORAGE - Progress + Leitner box
+   ============================================================ */
+const STORAGE_KEY = 'irreg-verb-progress-v1';
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return {};
+    return JSON.parse(raw);
+  } catch { return {}; }
+}
+function saveProgress(p) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); } catch {}
+}
+let progress = loadProgress();
+
+function recordResult(verbId, correct) {
+  const p = progress[verbId] || { correct:0, wrong:0, box:1, lastSeen:0 };
+  if (correct) {
+    p.correct = (p.correct || 0) + 1;
+    p.box = Math.min(5, (p.box || 1) + 1);
+  } else {
+    p.wrong = (p.wrong || 0) + 1;
+    p.box = 1;
+  }
+  p.lastSeen = Date.now();
+  progress[verbId] = p;
+  saveProgress(progress);
+}
+
+function getMastery(verbId) {
+  const p = progress[verbId];
+  if (!p) return 'new';
+  const total = (p.correct||0) + (p.wrong||0);
+  if (total === 0) return 'new';
+  if ((p.correct||0) >= 3 && (p.box||1) >= 4) return 'mastered';
+  if ((p.wrong||0) > (p.correct||0)) return 'struggling';
+  return 'learning';
+}
+
+function getWrongList() {
+  return VERBS.filter(v => {
+    const p = progress[v.id];
+    return p && (p.wrong||0) > 0 && getMastery(v.id) !== 'mastered';
+  });
+}
+
+/* ============================================================
+   ROUTER - very simple state machine
+   ============================================================ */
+const $main = document.getElementById('main');
+const $back = document.getElementById('backBtn');
+const $title = document.getElementById('screenTitle');
+const $stats = document.getElementById('topStats');
+
+let history = [];
+function navigate(view, params = {}) {
+  history.push({ view, params });
+  render();
+}
+function back() {
+  history.pop();
+  if (history.length === 0) history.push({ view:'home', params:{} });
+  render();
+}
+$back.addEventListener('click', back);
+
+function updateTopBar(viewName) {
+  $back.classList.toggle('hidden', history.length <= 1);
+  const mastered = VERBS.filter(v => getMastery(v.id) === 'mastered').length;
+  $stats.textContent = `${mastered}/${VERBS.length} 마스터`;
+  $title.innerHTML = `<span class="brand-dot"></span><span>${viewName}</span>`;
+}
+
+/* ============================================================
+   TTS - text to speech for English verbs
+   ============================================================ */
+function speak(text) {
+  if (!('speechSynthesis' in window)) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text.replace(/\//g, ' or '));
+    u.lang = 'en-US';
+    u.rate = 0.85;
+    u.pitch = 1;
+    speechSynthesis.speak(u);
+  } catch(e) {}
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function pickVerbs(catFilter, n) {
+  let pool = VERBS;
+  if (catFilter && catFilter !== 'ALL') {
+    if (catFilter === 'WRONG') {
+      pool = getWrongList();
+      if (pool.length < 4) pool = VERBS;
+    } else {
+      pool = VERBS.filter(v => v.cat === catFilter);
+    }
+  }
+  // Leitner weighting: boxes 1-2 appear more often
+  const weighted = [];
+  pool.forEach(v => {
+    const p = progress[v.id];
+    const box = (p && p.box) || 1;
+    const weight = Math.max(1, 6 - box);
+    for (let i = 0; i < weight; i++) weighted.push(v);
+  });
+  return shuffle(weighted).slice(0, n || pool.length);
+}
+
+/* ============================================================
+   VIEWS
+   ============================================================ */
+function render() {
+  const top = history[history.length - 1] || { view:'home', params:{} };
+  switch (top.view) {
+    case 'home':       renderHome(); break;
+    case 'categories': renderCategories(); break;
+    case 'category':   renderCategoryDetail(top.params); break;
+    case 'flashcard':  renderFlashcard(top.params); break;
+    case 'matching':   renderMatching(top.params); break;
+    case 'typing':     renderTyping(top.params); break;
+    case 'reverse':    renderReverse(top.params); break;
+    case 'fillblank':  renderFillBlank(top.params); break;
+    case 'mistakes':   renderMistakes(); break;
+    case 'dashboard':  renderDashboard(); break;
+    case 'pickStart':  renderPickStart(top.params); break;
+    default: renderHome();
+  }
+}
+
+function renderHome() {
+  updateTopBar('불규칙 동사 100');
+  const mastered = VERBS.filter(v => getMastery(v.id) === 'mastered').length;
+  const learning = VERBS.filter(v => getMastery(v.id) === 'learning').length;
+  const pct = Math.round(mastered / VERBS.length * 100);
+  const wrongCount = getWrongList().length;
+
+  $main.innerHTML = `
+    <div class="hero">
+      <h1>안녕! 오늘도 한 걸음 더 🚀</h1>
+      <p>매일 10개씩만 외워도 10일이면 끝나요. 매칭게임으로 가볍게 시작해볼까요?</p>
+      <div class="progress-row"><div class="progress-bar" style="width:${pct}%"></div></div>
+      <div class="progress-stats">
+        <span>마스터 ${mastered}개</span>
+        <span>학습중 ${learning}개</span>
+        <span>${pct}%</span>
+      </div>
+    </div>
+
+    <div class="section-title">학습 모드</div>
+    <div class="mode-grid">
+      <button class="mode-card featured" data-action="pick" data-mode="matching">
+        <div class="icon">🎯</div>
+        <div class="label">매칭 게임</div>
+        <div class="desc">짝을 찾아 외우기 — 가장 인기 모드</div>
+      </button>
+      <button class="mode-card" data-action="pick" data-mode="flashcard">
+        <div class="icon">🃏</div>
+        <div class="label">플래시카드</div>
+        <div class="desc">카드 뒤집어 차근차근 입문</div>
+      </button>
+      <button class="mode-card" data-action="pick" data-mode="typing">
+        <div class="icon">⌨️</div>
+        <div class="label">타이핑 모드</div>
+        <div class="desc">직접 철자 입력 — 시험 대비</div>
+      </button>
+      <button class="mode-card" data-action="pick" data-mode="reverse">
+        <div class="icon">🔁</div>
+        <div class="label">한→영 역방향</div>
+        <div class="desc">뜻 보고 3형태 입력</div>
+      </button>
+      <button class="mode-card" data-action="pick" data-mode="fillblank">
+        <div class="icon">📝</div>
+        <div class="label">빈칸 문장</div>
+        <div class="desc">문맥 속에서 알맞은 형태로</div>
+      </button>
+      <button class="mode-card" data-action="goto" data-view="mistakes">
+        <div class="icon">📒</div>
+        <div class="label">오답 노트 (${wrongCount})</div>
+        <div class="desc">틀린 동사만 집중 복습</div>
+      </button>
+    </div>
+
+    <div class="section-title">동사 둘러보기</div>
+    <div class="cat-list">
+      ${Object.entries(CATEGORIES).map(([key, c]) => {
+        const count = VERBS.filter(v => v.cat === key).length;
+        const m = VERBS.filter(v => v.cat === key && getMastery(v.id) === 'mastered').length;
+        return `
+          <div class="cat-row" data-action="goto" data-view="category" data-cat="${key}">
+            <div class="left">
+              <span style="font-size:20px">${c.emoji}</span>
+              <div>
+                <div class="name">${c.name}</div>
+                <div class="meta">${c.desc}</div>
+              </div>
+            </div>
+            <div style="text-align:right">
+              <div class="badge">${m}/${count}</div>
+              <div class="meta" style="margin-top:4px">동사 보기 →</div>
+            </div>
+          </div>`;
+      }).join('')}
+    </div>
+
+    <div class="section-title">진도 / 통계</div>
+    <button class="mode-card" data-action="goto" data-view="dashboard" style="width:100%">
+      <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+        <div>
+          <div class="label">📊 내 학습 현황</div>
+          <div class="desc">동사별 정답률, 약점 분석</div>
+        </div>
+        <div style="color:var(--text-dim);font-size:18px">→</div>
+      </div>
+    </button>
+  `;
+
+  $main.querySelectorAll('[data-action="pick"]').forEach(b => {
+    b.addEventListener('click', () => navigate('pickStart', { mode: b.dataset.mode }));
+  });
+  $main.querySelectorAll('[data-action="goto"]').forEach(b => {
+    b.addEventListener('click', () => {
+      if (b.dataset.view === 'category') navigate('category', { cat: b.dataset.cat });
+      else navigate(b.dataset.view, {});
+    });
+  });
+}
+
+/* ----- Category picker / Start screen ----- */
+function renderPickStart({ mode }) {
+  const modeLabels = {
+    matching:  { title:'매칭 게임', desc:'어느 카테고리로 시작할까요? 처음이면 AAA부터 추천!' },
+    flashcard: { title:'플래시카드', desc:'카드를 넘기며 천천히 외워봐요' },
+    typing:    { title:'타이핑 모드', desc:'직접 철자를 입력해요. 익숙해진 후 추천' },
+    reverse:   { title:'한→영 역방향', desc:'한국어 뜻을 보고 영어 3형태를 모두 입력' },
+    fillblank: { title:'빈칸 문장', desc:'문장 속 빈칸에 알맞은 형태를 입력' }
+  };
+  const m = modeLabels[mode] || { title:'시작', desc:'' };
+  updateTopBar(m.title);
+
+  // Sub-options for matching
+  let subOptions = '';
+  if (mode === 'matching') {
+    subOptions = `
+      <div class="section-title">어떤 형태를 맞출까요?</div>
+      <div class="chip-row" id="matchType">
+        <div class="chip active" data-type="past">과거형</div>
+        <div class="chip" data-type="pp">과거분사</div>
+        <div class="chip" data-type="both">둘 다</div>
+      </div>
+    `;
+  }
+
+  $main.innerHTML = `
+    <div class="start-screen">
+      <h3>${m.title} 시작</h3>
+      <p>${m.desc}</p>
+
+      <div class="section-title" style="margin:8px 0">카테고리 선택</div>
+      <div class="chip-row" id="catChips">
+        <div class="chip active" data-cat="ALL">전체 (${VERBS.length})</div>
+        ${Object.entries(CATEGORIES).map(([k,c]) => {
+          const cnt = VERBS.filter(v => v.cat === k).length;
+          return `<div class="chip" data-cat="${k}">${c.emoji} ${c.name.split(' ')[0]} (${cnt})</div>`;
+        }).join('')}
+        ${getWrongList().length >= 4 ? `<div class="chip" data-cat="WRONG">📒 오답만 (${getWrongList().length})</div>` : ''}
+      </div>
+
+      <div class="section-title" style="margin:14px 0 8px">문항 수</div>
+      <div class="chip-row" id="countChips">
+        <div class="chip" data-count="5">5개</div>
+        <div class="chip active" data-count="10">10개</div>
+        <div class="chip" data-count="20">20개</div>
+        ${mode !== 'matching' ? '<div class="chip" data-count="0">전체</div>' : ''}
+      </div>
+
+      ${subOptions}
+
+      <button class="btn-primary mt-16" id="startBtn">시작하기</button>
+    </div>
+  `;
+
+  function setupChips(rowId, attr) {
+    const row = $main.querySelector('#' + rowId);
+    if (!row) return;
+    row.addEventListener('click', e => {
+      const chip = e.target.closest('.chip');
+      if (!chip) return;
+      row.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  }
+  setupChips('catChips','cat');
+  setupChips('countChips','count');
+  setupChips('matchType','type');
+
+  $main.querySelector('#startBtn').addEventListener('click', () => {
+    const cat = $main.querySelector('#catChips .chip.active').dataset.cat;
+    const count = parseInt($main.querySelector('#countChips .chip.active').dataset.count, 10);
+    const params = { cat, count: count || 999 };
+    if (mode === 'matching') {
+      params.type = $main.querySelector('#matchType .chip.active').dataset.type;
+      // For matching, cap pairs at 6 per round for usability
+      params.pairs = Math.min(6, params.count);
+    }
+    navigate(mode, params);
+  });
+}
+
+/* ----- Categories (handled inline in home, this is verb browse) ----- */
+function renderCategoryDetail({ cat }) {
+  const c = CATEGORIES[cat];
+  updateTopBar(c ? c.name : '카테고리');
+  const verbs = VERBS.filter(v => v.cat === cat);
+
+  $main.innerHTML = `
+    <div class="hero" style="background:linear-gradient(135deg,#6366f1,#a78bfa)">
+      <h1>${c.emoji} ${c.name}</h1>
+      <p>${c.desc} · 총 ${verbs.length}개</p>
+    </div>
+
+    <div class="gap-8" style="margin-bottom:14px">
+      <button class="btn-secondary" data-action="flashcard">🃏 카드로 보기</button>
+      <button class="btn-secondary" data-action="matching">🎯 매칭게임</button>
+    </div>
+
+    <div class="verb-grid">
+      ${verbs.map(v => {
+        const m = getMastery(v.id);
+        const dot = m === 'mastered' ? '<span class="mastered-dot"></span>'
+                   : m === 'struggling' ? '<span class="struggling-dot"></span>' : '';
+        return `
+          <div class="verb-row">
+            <div class="verb-forms">
+              <div class="form"><span class="lbl">원형${dot}</span><span class="val">${v.base}</span></div>
+              <div class="form"><span class="lbl">과거형</span><span class="val">${v.past}</span></div>
+              <div class="form"><span class="lbl">과거분사</span><span class="val">${v.pp}</span></div>
+            </div>
+            <button class="tts-btn" data-speak="${v.base.split('/')[0]} ${v.past} ${v.pp}">🔊</button>
+            <div class="meaning">${v.ko}${v.note ? ' · <em style="color:var(--warn)">⚠ ' + v.note + '</em>' : ''}</div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+
+  $main.querySelectorAll('[data-speak]').forEach(b => {
+    b.addEventListener('click', () => speak(b.dataset.speak));
+  });
+  $main.querySelector('[data-action="flashcard"]').addEventListener('click', () => {
+    navigate('flashcard', { cat, count: verbs.length });
+  });
+  $main.querySelector('[data-action="matching"]').addEventListener('click', () => {
+    navigate('pickStart', { mode: 'matching' });
+  });
+}
+
+/* ============================================================
+   FLASHCARD MODE
+   ============================================================ */
+function renderFlashcard({ cat, count }) {
+  updateTopBar('플래시카드');
+  const verbs = pickVerbs(cat, count);
+  let idx = 0;
+  let flipped = false;
+
+  function draw() {
+    const v = verbs[idx];
+    flipped = false;
+    $main.innerHTML = `
+      <div class="quiz-progress">
+        <span>${idx+1} / ${verbs.length}</span>
+        <div class="bar"><div style="width:${(idx)/verbs.length*100}%"></div></div>
+      </div>
+
+      <div class="flashcard-wrap">
+        <div class="flashcard" id="card">
+          <div class="flashcard-inner">
+            <div class="flashcard-face front">
+              <div class="big">${v.base}</div>
+              <div class="meaning">${v.ko}</div>
+              <div class="hint">👆 카드를 터치하면 정답이 보여요</div>
+              <button class="tts-btn" style="margin-top:14px" id="ttsBtn">🔊 발음</button>
+            </div>
+            <div class="flashcard-face back">
+              <div class="big">${v.base}</div>
+              <div class="meaning">${v.ko}</div>
+              <div class="forms-table">
+                <div><div class="lbl">원형</div><div class="val">${v.base}</div></div>
+                <div><div class="lbl">과거형</div><div class="val">${v.past}</div></div>
+                <div><div class="lbl">과거분사</div><div class="val">${v.pp}</div></div>
+              </div>
+              ${v.note ? `<div class="hint" style="color:var(--warn);margin-top:10px">⚠ ${v.note}</div>` : ''}
+            </div>
+          </div>
+        </div>
+
+        <div class="deck-controls">
+          <button class="icon-btn" id="prev" ${idx===0?'disabled':''}>‹</button>
+          <span class="pos">${CATEGORIES[v.cat]?.name || ''}</span>
+          <button class="icon-btn" id="next">${idx===verbs.length-1?'✓':'›'}</button>
+        </div>
+
+        <div class="deck-rate">
+          <button class="again" data-rate="again">😖 어려워</button>
+          <button class="ok" data-rate="ok">🤔 보통</button>
+          <button class="good" data-rate="good">😎 알아!</button>
+        </div>
+      </div>
+    `;
+
+    const card = $main.querySelector('#card');
+    card.addEventListener('click', e => {
+      if (e.target.closest('.tts-btn') || e.target.closest('button')) return;
+      flipped = !flipped;
+      card.classList.toggle('flipped', flipped);
+    });
+
+    $main.querySelector('#ttsBtn').addEventListener('click', e => {
+      e.stopPropagation();
+      speak(`${v.base.split('/')[0]}, ${v.past}, ${v.pp === '-' ? '' : v.pp}`);
+    });
+
+    $main.querySelector('#prev').addEventListener('click', () => {
+      if (idx > 0) { idx--; draw(); }
+    });
+    $main.querySelector('#next').addEventListener('click', () => {
+      if (idx < verbs.length - 1) { idx++; draw(); }
+      else { renderResults({ score: verbs.length, total: verbs.length, mode:'flashcard' }); }
+    });
+
+    $main.querySelectorAll('[data-rate]').forEach(b => {
+      b.addEventListener('click', () => {
+        const rate = b.dataset.rate;
+        recordResult(v.id, rate === 'good');
+        if (rate === 'again') {
+          // re-insert near end
+          verbs.push(v);
+        }
+        if (idx < verbs.length - 1) { idx++; draw(); }
+        else { renderResults({ score: verbs.length, total: verbs.length, mode:'flashcard' }); }
+      });
+    });
+  }
+  draw();
+}
+
+/* ============================================================
+   MATCHING GAME
+   - type: 'past' | 'pp' | 'both'
+   ============================================================ */
+function renderMatching({ cat, type = 'past', pairs = 6 }) {
+  updateTopBar('매칭 게임');
+  const verbs = pickVerbs(cat, pairs).slice(0, pairs);
+  let mistakes = 0, matchedCount = 0;
+
+  function buildBoard() {
+    const leftCards = verbs.map(v => ({ id: v.id, label: v.base, sub: v.ko, side:'L' }));
+    let rightLabels = [];
+    if (type === 'past') rightLabels = verbs.map(v => ({ id: v.id, label: v.past, side:'R' }));
+    else if (type === 'pp') rightLabels = verbs.map(v => ({ id: v.id, label: v.pp === '-' ? '(없음)' : v.pp, side:'R' }));
+    else if (type === 'both') {
+      // pair: present+ko ↔ "past / pp"
+      rightLabels = verbs.map(v => ({ id: v.id, label: `${v.past} / ${v.pp}`, side:'R' }));
+    }
+    const right = shuffle(rightLabels);
+    const left = shuffle(leftCards);
+
+    const titleMap = { past:'과거형 매칭', pp:'과거분사 매칭', both:'과거+과거분사 매칭' };
+    const colTitleR = { past:'과거형', pp:'과거분사', both:'과거 / 과거분사' };
+
+    $main.innerHTML = `
+      <div class="quiz-progress">
+        <span>매치 ${matchedCount}/${verbs.length}  ·  실수 ${mistakes}</span>
+        <div class="bar"><div style="width:${matchedCount/verbs.length*100}%"></div></div>
+      </div>
+      <h3 style="margin:8px 4px 14px;font-size:16px">${titleMap[type]}</h3>
+      <div class="match-board">
+        <div class="match-col">
+          <div class="col-title">원형 + 뜻</div>
+          ${left.map(c => `
+            <div class="match-card" data-side="L" data-id="${c.id}">
+              <div>${c.label}</div>
+              <div class="sub">${c.sub}</div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="match-col">
+          <div class="col-title">${colTitleR[type]}</div>
+          ${right.map(c => `
+            <div class="match-card" data-side="R" data-id="${c.id}">${c.label}</div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+
+    let selectedL = null, selectedR = null;
+    $main.querySelectorAll('.match-card').forEach(card => {
+      card.addEventListener('click', () => {
+        if (card.classList.contains('matched')) return;
+        if (card.dataset.side === 'L') {
+          $main.querySelectorAll('.match-card[data-side="L"]').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          selectedL = card;
+        } else {
+          $main.querySelectorAll('.match-card[data-side="R"]').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          selectedR = card;
+        }
+        if (selectedL && selectedR) {
+          if (selectedL.dataset.id === selectedR.dataset.id) {
+            // correct
+            selectedL.classList.add('matched');
+            selectedR.classList.add('matched');
+            selectedL.classList.remove('selected');
+            selectedR.classList.remove('selected');
+            recordResult(selectedL.dataset.id, true);
+            matchedCount++;
+            speak(selectedR.textContent.trim().split('/')[0]);
+            updateProgress();
+            if (matchedCount === verbs.length) {
+              setTimeout(() => {
+                renderResults({ score: verbs.length, total: verbs.length, mistakes, mode:'matching' });
+              }, 500);
+            }
+          } else {
+            // wrong
+            mistakes++;
+            recordResult(selectedL.dataset.id, false);
+            recordResult(selectedR.dataset.id, false);
+            const a = selectedL, b = selectedR;
+            a.classList.add('wrong'); b.classList.add('wrong');
+            setTimeout(() => {
+              a.classList.remove('wrong','selected');
+              b.classList.remove('wrong','selected');
+            }, 600);
+            updateProgress();
+          }
+          selectedL = null; selectedR = null;
+        }
+      });
+    });
+
+    function updateProgress() {
+      const bar = $main.querySelector('.quiz-progress .bar > div');
+      if (bar) bar.style.width = (matchedCount/verbs.length*100) + '%';
+      const span = $main.querySelector('.quiz-progress > span');
+      if (span) span.textContent = `매치 ${matchedCount}/${verbs.length}  ·  실수 ${mistakes}`;
+    }
+  }
+  buildBoard();
+}
+
+/* ============================================================
+   TYPING MODE
+   - Show base + ko, ask for past + pp
+   ============================================================ */
+function renderTyping({ cat, count }) {
+  updateTopBar('타이핑 모드');
+  const verbs = pickVerbs(cat, count);
+  let idx = 0, score = 0;
+  let perRoundWrong = [];
+
+  function draw() {
+    if (idx >= verbs.length) {
+      renderResults({ score, total: verbs.length, mode:'typing', wrong: perRoundWrong });
+      return;
+    }
+    const v = verbs[idx];
+    const needPP = v.pp !== '-';
+
+    $main.innerHTML = `
+      <div class="quiz-progress">
+        <span>${idx+1} / ${verbs.length}  ·  점수 ${score}</span>
+        <div class="bar"><div style="width:${idx/verbs.length*100}%"></div></div>
+      </div>
+      <div class="quiz-card">
+        <div class="quiz-prompt">
+          <div class="verb">${v.base}</div>
+          <div class="meaning">${v.ko}</div>
+        </div>
+        <div class="input-row">
+          <div class="input-pair">
+            <span class="lbl">과거형</span>
+            <input type="text" id="i1" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="과거형 입력" />
+          </div>
+          ${needPP ? `
+          <div class="input-pair">
+            <span class="lbl">과거분사</span>
+            <input type="text" id="i2" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="과거분사 입력" />
+          </div>` : ''}
+        </div>
+        <div id="feedback"></div>
+        <button class="btn-primary mt-16" id="submit">확인</button>
+      </div>
+    `;
+
+    const i1 = $main.querySelector('#i1');
+    const i2 = $main.querySelector('#i2');
+    const fb = $main.querySelector('#feedback');
+    const btn = $main.querySelector('#submit');
+    i1.focus();
+    [i1, i2].forEach(inp => inp && inp.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        if (inp === i1 && i2) i2.focus();
+        else btn.click();
+      }
+    }));
+
+    let answered = false;
+    btn.addEventListener('click', () => {
+      if (!answered) {
+        const ans1 = (i1.value || '').trim().toLowerCase();
+        const ans2 = needPP ? (i2.value || '').trim().toLowerCase() : null;
+        const ok1 = checkAnswer(ans1, v.past);
+        const ok2 = needPP ? checkAnswer(ans2, v.pp) : true;
+        i1.classList.add(ok1 ? 'correct' : 'wrong');
+        if (needPP) i2.classList.add(ok2 ? 'correct' : 'wrong');
+        i1.disabled = true; if (i2) i2.disabled = true;
+        const allOk = ok1 && ok2;
+        if (allOk) {
+          score++;
+          recordResult(v.id, true);
+          fb.innerHTML = `<div class="quiz-feedback correct">✅ 정답!<div class="reveal">${v.base} - ${v.past} - ${v.pp}</div></div>`;
+        } else {
+          recordResult(v.id, false);
+          perRoundWrong.push(v);
+          fb.innerHTML = `<div class="quiz-feedback wrong">❌ 다시 확인해봐요<div class="reveal">정답: ${v.base} - <u>${v.past}</u> - <u>${v.pp}</u></div>${v.note ? '<div style="margin-top:6px;color:var(--warn)">⚠ ' + v.note + '</div>' : ''}</div>`;
+        }
+        btn.textContent = '다음 →';
+        answered = true;
+      } else {
+        idx++; draw();
+      }
+    });
+  }
+  draw();
+}
+
+/* ============================================================
+   REVERSE MODE - 한→영
+   Show Korean meaning, type all three forms
+   ============================================================ */
+function renderReverse({ cat, count }) {
+  updateTopBar('한→영 역방향');
+  const verbs = pickVerbs(cat, count);
+  let idx = 0, score = 0;
+  let perRoundWrong = [];
+
+  function draw() {
+    if (idx >= verbs.length) {
+      renderResults({ score, total: verbs.length, mode:'reverse', wrong: perRoundWrong });
+      return;
+    }
+    const v = verbs[idx];
+    const needPP = v.pp !== '-';
+
+    $main.innerHTML = `
+      <div class="quiz-progress">
+        <span>${idx+1} / ${verbs.length}  ·  점수 ${score}</span>
+        <div class="bar"><div style="width:${idx/verbs.length*100}%"></div></div>
+      </div>
+      <div class="quiz-card">
+        <div class="quiz-prompt">
+          <div class="ko">${v.ko}</div>
+          <div class="meaning" style="margin-top:8px">한국어 뜻을 보고 영어 3형태를 모두 적어보세요</div>
+        </div>
+        <div class="input-row">
+          <div class="input-pair">
+            <span class="lbl">원형</span>
+            <input type="text" id="i0" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="원형" />
+          </div>
+          <div class="input-pair">
+            <span class="lbl">과거형</span>
+            <input type="text" id="i1" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="과거형" />
+          </div>
+          ${needPP ? `
+          <div class="input-pair">
+            <span class="lbl">과거분사</span>
+            <input type="text" id="i2" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="과거분사" />
+          </div>` : ''}
+        </div>
+        <div id="feedback"></div>
+        <button class="btn-primary mt-16" id="submit">확인</button>
+      </div>
+    `;
+    const i0 = $main.querySelector('#i0');
+    const i1 = $main.querySelector('#i1');
+    const i2 = $main.querySelector('#i2');
+    const fb = $main.querySelector('#feedback');
+    const btn = $main.querySelector('#submit');
+    i0.focus();
+    [i0,i1,i2].forEach((inp, k, arr) => inp && inp.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const next = arr.slice(k+1).find(x => x);
+        if (next) next.focus(); else btn.click();
+      }
+    }));
+
+    let answered = false;
+    btn.addEventListener('click', () => {
+      if (!answered) {
+        const a0 = (i0.value||'').trim().toLowerCase();
+        const a1 = (i1.value||'').trim().toLowerCase();
+        const a2 = needPP ? (i2.value||'').trim().toLowerCase() : null;
+        const ok0 = checkAnswer(a0, v.base);
+        const ok1 = checkAnswer(a1, v.past);
+        const ok2 = needPP ? checkAnswer(a2, v.pp) : true;
+        i0.classList.add(ok0?'correct':'wrong');
+        i1.classList.add(ok1?'correct':'wrong');
+        if (needPP) i2.classList.add(ok2?'correct':'wrong');
+        [i0,i1,i2].forEach(x => x && (x.disabled = true));
+        const allOk = ok0 && ok1 && ok2;
+        if (allOk) {
+          score++;
+          recordResult(v.id, true);
+          fb.innerHTML = `<div class="quiz-feedback correct">✅ 완벽해요!<div class="reveal">${v.base} - ${v.past} - ${v.pp}</div></div>`;
+        } else {
+          recordResult(v.id, false);
+          perRoundWrong.push(v);
+          fb.innerHTML = `<div class="quiz-feedback wrong">❌ 정답을 확인하세요<div class="reveal">${v.base} - ${v.past} - ${v.pp}</div></div>`;
+        }
+        btn.textContent = '다음 →';
+        answered = true;
+      } else {
+        idx++; draw();
+      }
+    });
+  }
+  draw();
+}
+
+/* ============================================================
+   FILL IN BLANK SENTENCE
+   ============================================================ */
+function renderFillBlank({ cat, count }) {
+  updateTopBar('빈칸 문장');
+  const verbs = pickVerbs(cat, count);
+  let idx = 0, score = 0;
+  let perRoundWrong = [];
+
+  function draw() {
+    if (idx >= verbs.length) {
+      renderResults({ score, total: verbs.length, mode:'fillblank', wrong: perRoundWrong });
+      return;
+    }
+    const v = verbs[idx];
+    const target = v.tense === 'pp' ? v.pp : v.past;
+    const tenseLabel = v.tense === 'pp' ? '과거분사' : '과거형';
+    const sentence = (v.ex || '').replace('__', '<span class="blank">______</span>');
+
+    $main.innerHTML = `
+      <div class="quiz-progress">
+        <span>${idx+1} / ${verbs.length}  ·  점수 ${score}</span>
+        <div class="bar"><div style="width:${idx/verbs.length*100}%"></div></div>
+      </div>
+      <div class="quiz-card">
+        <div class="quiz-prompt">
+          <div class="verb">${v.base}</div>
+          <div class="meaning">${v.ko} · 빈칸에 <b>${tenseLabel}</b>을 넣으세요</div>
+        </div>
+        <div class="quiz-sentence">${sentence}</div>
+        <div class="input-row">
+          <div class="input-pair">
+            <span class="lbl">${tenseLabel}</span>
+            <input type="text" id="i1" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="빈칸에 들어갈 형태" />
+          </div>
+        </div>
+        <div id="feedback"></div>
+        <button class="btn-primary mt-16" id="submit">확인</button>
+      </div>
+    `;
+    const i1 = $main.querySelector('#i1');
+    const fb = $main.querySelector('#feedback');
+    const btn = $main.querySelector('#submit');
+    i1.focus();
+    i1.addEventListener('keydown', e => { if (e.key === 'Enter') btn.click(); });
+
+    let answered = false;
+    btn.addEventListener('click', () => {
+      if (!answered) {
+        const ans = (i1.value||'').trim().toLowerCase();
+        const ok = checkAnswer(ans, target);
+        i1.classList.add(ok?'correct':'wrong');
+        i1.disabled = true;
+        if (ok) {
+          score++;
+          recordResult(v.id, true);
+          const filled = v.ex.replace('__', `<u>${target}</u>`);
+          fb.innerHTML = `<div class="quiz-feedback correct">✅ 정답!<div class="reveal">${filled}</div></div>`;
+        } else {
+          recordResult(v.id, false);
+          perRoundWrong.push(v);
+          const filled = v.ex.replace('__', `<u>${target}</u>`);
+          fb.innerHTML = `<div class="quiz-feedback wrong">❌ 다시 확인<div class="reveal">${filled}</div><div style="margin-top:4px">3형태: ${v.base} - ${v.past} - ${v.pp}</div></div>`;
+        }
+        btn.textContent = '다음 →';
+        answered = true;
+      } else {
+        idx++; draw();
+      }
+    });
+  }
+  draw();
+}
+
+/* ============================================================
+   Answer checking (allow common variants like gotten/got)
+   ============================================================ */
+function checkAnswer(input, expected) {
+  if (!input) return false;
+  const norm = s => s.toLowerCase().trim().replace(/\s+/g,' ');
+  const inp = norm(input);
+  // expected may contain '/' for variants
+  return expected.split('/').some(e => norm(e) === inp);
+}
+
+/* ============================================================
+   MISTAKES NOTEBOOK
+   ============================================================ */
+function renderMistakes() {
+  updateTopBar('오답 노트');
+  const wrong = getWrongList();
+  if (wrong.length === 0) {
+    $main.innerHTML = `
+      <div class="empty-state">
+        <div class="ico">🎉</div>
+        <h3>아직 오답이 없어요</h3>
+        <p>게임을 좀 더 해보면 여기에 약한 동사가 자동으로 모여요</p>
+      </div>
+    `;
+    return;
+  }
+  $main.innerHTML = `
+    <div class="hero" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)">
+      <h1>📒 내 오답 노트</h1>
+      <p>아직 확실하지 않은 동사 ${wrong.length}개. 집중해서 복습해봐요.</p>
+    </div>
+    <div class="gap-8" style="margin-bottom:12px">
+      <button class="btn-primary" style="width:auto" id="practiceBtn">🎯 오답으로만 매칭게임</button>
+      <button class="btn-secondary" id="typingBtn">⌨️ 타이핑 복습</button>
+    </div>
+    <div class="verb-grid">
+      ${wrong.map(v => {
+        const p = progress[v.id] || {};
+        return `
+          <div class="verb-row">
+            <div class="verb-forms">
+              <div class="form"><span class="lbl">원형</span><span class="val">${v.base}</span></div>
+              <div class="form"><span class="lbl">과거</span><span class="val">${v.past}</span></div>
+              <div class="form"><span class="lbl">과거분사</span><span class="val">${v.pp}</span></div>
+            </div>
+            <button class="tts-btn" data-speak="${v.base.split('/')[0]} ${v.past} ${v.pp}">🔊</button>
+            <div class="meaning">${v.ko} · <span style="color:var(--danger)">오답 ${p.wrong||0}회</span> / 정답 ${p.correct||0}회</div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+  $main.querySelectorAll('[data-speak]').forEach(b => {
+    b.addEventListener('click', () => speak(b.dataset.speak));
+  });
+  $main.querySelector('#practiceBtn').addEventListener('click', () => {
+    navigate('matching', { cat:'WRONG', type:'both', pairs: Math.min(6, wrong.length) });
+  });
+  $main.querySelector('#typingBtn').addEventListener('click', () => {
+    navigate('typing', { cat:'WRONG', count: Math.min(10, wrong.length) });
+  });
+}
+
+/* ============================================================
+   DASHBOARD / STATS
+   ============================================================ */
+function renderDashboard() {
+  updateTopBar('내 학습 현황');
+  const mastered = VERBS.filter(v => getMastery(v.id) === 'mastered');
+  const learning = VERBS.filter(v => getMastery(v.id) === 'learning');
+  const struggling = VERBS.filter(v => getMastery(v.id) === 'struggling');
+  const news = VERBS.filter(v => getMastery(v.id) === 'new');
+
+  let totalCorrect = 0, totalWrong = 0;
+  Object.values(progress).forEach(p => {
+    totalCorrect += p.correct||0;
+    totalWrong += p.wrong||0;
+  });
+  const totalAttempts = totalCorrect + totalWrong;
+  const accuracy = totalAttempts ? Math.round(totalCorrect/totalAttempts*100) : 0;
+
+  $main.innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-box"><div class="num">${mastered.length}</div><div class="lbl">마스터</div></div>
+      <div class="stat-box"><div class="num">${learning.length + struggling.length}</div><div class="lbl">학습중</div></div>
+      <div class="stat-box"><div class="num">${accuracy}%</div><div class="lbl">정답률</div></div>
+    </div>
+
+    <div class="section-title">카테고리별 진도</div>
+    ${Object.entries(CATEGORIES).map(([k,c]) => {
+      const tv = VERBS.filter(v => v.cat === k);
+      const m = tv.filter(v => getMastery(v.id) === 'mastered').length;
+      const pct = Math.round(m/tv.length*100);
+      return `
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:8px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <strong>${c.emoji} ${c.name}</strong>
+            <span style="color:var(--text-dim);font-size:13px">${m}/${tv.length} (${pct}%)</span>
+          </div>
+          <div style="background:var(--border);height:6px;border-radius:999px;overflow:hidden">
+            <div style="background:var(--primary);height:100%;width:${pct}%"></div>
+          </div>
+        </div>
+      `;
+    }).join('')}
+
+    ${struggling.length > 0 ? `
+      <div class="section-title">⚠️ 약한 동사 (집중 복습 추천)</div>
+      <div class="verb-grid">
+        ${struggling.slice(0,10).map(v => {
+          const p = progress[v.id] || {};
+          return `
+            <div class="verb-row">
+              <div class="verb-forms">
+                <div class="form"><span class="lbl">원형</span><span class="val">${v.base}</span></div>
+                <div class="form"><span class="lbl">과거</span><span class="val">${v.past}</span></div>
+                <div class="form"><span class="lbl">과거분사</span><span class="val">${v.pp}</span></div>
+              </div>
+              <button class="tts-btn" data-speak="${v.base.split('/')[0]} ${v.past} ${v.pp}">🔊</button>
+              <div class="meaning">${v.ko} · 정답 ${p.correct||0} · 오답 ${p.wrong||0}</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    ` : ''}
+
+    <div class="section-title">기록 초기화</div>
+    <button class="btn-secondary" id="resetBtn">학습 기록 모두 지우기</button>
+  `;
+
+  $main.querySelectorAll('[data-speak]').forEach(b => {
+    b.addEventListener('click', () => speak(b.dataset.speak));
+  });
+  $main.querySelector('#resetBtn').addEventListener('click', () => {
+    if (confirm('정말 학습 기록을 모두 지울까요? 되돌릴 수 없어요.')) {
+      progress = {};
+      saveProgress(progress);
+      render();
+    }
+  });
+}
+
+/* ============================================================
+   RESULTS SCREEN
+   ============================================================ */
+function renderResults({ score, total, mistakes, mode, wrong }) {
+  updateTopBar('결과');
+  const pct = total ? Math.round(score/total*100) : 100;
+  let msg = '잘했어요!', emoji = '👍';
+  if (pct >= 90) { msg = '완벽해요!'; emoji = '🏆'; fireConfetti(); }
+  else if (pct >= 70) { msg = '잘 하고 있어요!'; emoji = '✨'; }
+  else if (pct >= 50) { msg = '조금만 더!'; emoji = '💪'; }
+  else { msg = '다시 한 번 도전!'; emoji = '🔥'; }
+
+  $main.innerHTML = `
+    <div class="results-card">
+      <div style="font-size:48px">${emoji}</div>
+      <div class="big">${score} / ${total}</div>
+      <div class="label">${msg} ${mistakes !== undefined ? `· 실수 ${mistakes}회` : ''}</div>
+    </div>
+    ${wrong && wrong.length ? `
+      <div class="section-title">방금 틀린 동사 (${wrong.length}개)</div>
+      <div class="verb-grid">
+        ${wrong.map(v => `
+          <div class="verb-row">
+            <div class="verb-forms">
+              <div class="form"><span class="lbl">원형</span><span class="val">${v.base}</span></div>
+              <div class="form"><span class="lbl">과거</span><span class="val">${v.past}</span></div>
+              <div class="form"><span class="lbl">과거분사</span><span class="val">${v.pp}</span></div>
+            </div>
+            <button class="tts-btn" data-speak="${v.base.split('/')[0]} ${v.past} ${v.pp}">🔊</button>
+            <div class="meaning">${v.ko}</div>
+          </div>
+        `).join('')}
+      </div>
+    ` : ''}
+    <div class="results-actions mt-16">
+      <button class="btn-secondary" id="homeBtn">🏠 홈으로</button>
+      <button class="btn-primary" id="againBtn">↻ 한 번 더</button>
+    </div>
+  `;
+  $main.querySelectorAll('[data-speak]').forEach(b => {
+    b.addEventListener('click', () => speak(b.dataset.speak));
+  });
+  $main.querySelector('#homeBtn').addEventListener('click', () => {
+    history = [{ view:'home', params:{} }];
+    render();
+  });
+  $main.querySelector('#againBtn').addEventListener('click', () => {
+    history.pop(); // remove results
+    const prev = history[history.length - 1];
+    if (prev) {
+      history.pop();
+      navigate(prev.view, prev.params);
+    } else navigate('home');
+  });
+}
+
+function fireConfetti() {
+  const colors = ['#6366f1','#ec4899','#14b8a6','#fbbf24','#a855f7'];
+  for (let i = 0; i < 60; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random()*100 + 'vw';
+    c.style.background = colors[i % colors.length];
+    c.style.animationDelay = (Math.random()*0.5) + 's';
+    c.style.transform = `rotate(${Math.random()*360}deg)`;
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 3000);
+  }
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+history.push({ view:'home', params:{} });
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node (안 쓰지만 만약을 위해)
+node_modules/
+npm-debug.log*
+
+# Vercel
+.vercel
