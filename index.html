@@ -691,11 +691,34 @@
   .gap-8 { display: flex; gap: 8px; flex-wrap: wrap; }
   .gap-10 { display: flex; gap: 10px; }
 
-  /* Small screens */
+  /* Keyboard hint */
+  .kb-hint {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: center;
+    margin-top: 6px;
+  }
+  .kb-hint kbd {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 11px;
+    color: var(--text);
+    margin: 0 1px;
+  }
+
+  /* Small screens — hide kb hint on mobile (no physical keyboard) */
   @media (max-width: 480px) {
     .mode-grid { grid-template-columns: 1fr; }
     .flashcard-face .big { font-size: 30px; }
     .verb-forms { font-size: 13px; gap: 6px 10px; }
+    .kb-hint { display: none; }
+  }
+  @media (hover: none) and (pointer: coarse) {
+    .kb-hint { display: none; }
   }
 
   /* Confetti for results */
@@ -904,6 +927,13 @@ const $title = document.getElementById('screenTitle');
 const $stats = document.getElementById('topStats');
 
 let history = [];
+let cleanupKeyHandler = null;
+function setKeyHandler(handler) {
+  if (cleanupKeyHandler) { cleanupKeyHandler(); cleanupKeyHandler = null; }
+  if (!handler) return;
+  document.addEventListener('keydown', handler);
+  cleanupKeyHandler = () => document.removeEventListener('keydown', handler);
+}
 function navigate(view, params = {}) {
   history.push({ view, params });
   render();
@@ -973,6 +1003,8 @@ function pickVerbs(catFilter, n) {
    VIEWS
    ============================================================ */
 function render() {
+  // Clean up any keyboard handlers from previous screen
+  setKeyHandler(null);
   const top = history[history.length - 1] || { view:'home', params:{} };
   switch (top.view) {
     case 'home':       renderHome(); break;
@@ -1268,6 +1300,8 @@ function renderFlashcard({ cat, count }) {
           <button class="ok" data-rate="ok">🤔 보통</button>
           <button class="good" data-rate="good">😎 알아!</button>
         </div>
+
+        <div class="kb-hint">⌨️ <kbd>←</kbd> <kbd>→</kbd> 카드 이동 · <kbd>Space</kbd> 뒤집기</div>
       </div>
     `;
 
@@ -1276,6 +1310,28 @@ function renderFlashcard({ cat, count }) {
       if (e.target.closest('.tts-btn') || e.target.closest('button')) return;
       flipped = !flipped;
       card.classList.toggle('flipped', flipped);
+    });
+
+    // 키보드 단축키: ← → Space
+    setKeyHandler((e) => {
+      const tag = (e.target && e.target.tagName) || '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        const prev = $main.querySelector('#prev');
+        if (prev && !prev.disabled) prev.click();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        const next = $main.querySelector('#next');
+        if (next) next.click();
+      } else if (e.key === ' ' || e.code === 'Space') {
+        e.preventDefault();
+        const c = $main.querySelector('#card');
+        if (c) {
+          flipped = !flipped;
+          c.classList.toggle('flipped', flipped);
+        }
+      }
     });
 
     $main.querySelector('#ttsBtn').addEventListener('click', e => {
